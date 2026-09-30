@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Nour Edan - حجز موعد</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky-blue: #29ABE2;
+    --sky-blue-dark: #1a8bc0;
+    --sky-blue-light: #e6f6fd;
+    --maroon: #A6194A;
+    --maroon-dark: #7d1238;
+    --maroon-light: #fce8ef;
+    --gray: #6b7280;
+    --dark: #1f2937;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif; }
+  body {
+    background: linear-gradient(-45deg, #e6f6fd, #fce8ef, #e6f6fd, #fff5f8);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    overflow-x: hidden;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  body::before, body::after {
+    content: '';
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::before {
+    width: 400px; height: 400px;
+    background: var(--sky-blue);
+    top: -100px; right: -100px;
+    animation: float1 20s ease-in-out infinite;
+  }
+  body::after {
+    width: 350px; height: 350px;
+    background: var(--maroon);
+    bottom: -100px; left: -100px;
+    animation: float2 25s ease-in-out infinite;
+  }
+  @keyframes float1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-50px, 50px) scale(1.1); }
+  }
+  @keyframes float2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -50px) scale(1.15); }
+  }
+  .container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    max-width: 620px;
+    width: 100%;
+    border-radius: 28px;
+    box-shadow: 0 20px 60px rgba(41, 171, 226, 0.2), 0 8px 20px rgba(166, 25, 74, 0.1);
+    padding: 35px 30px;
+    margin-top: 20px;
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.7s ease-out;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .logo-wrapper { text-align: center; margin-bottom: 20px; position: relative; }
+  .logo-wrapper img {
+    max-width: 260px;
+    width: 100%;
+    height: auto;
+    animation: logoPulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 8px 20px rgba(41, 171, 226, 0.25));
+  }
+  @keyframes logoPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+  }
+  h1 {
+    text-align: center;
+    background: linear-gradient(135deg, var(--sky-blue), var(--maroon));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    font-size: 28px;
+    font-weight: 900;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--gray);
+    margin-bottom: 28px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    height: 2px;
+    width: 60px;
+    background: linear-gradient(90deg, transparent, var(--sky-blue));
+    border-radius: 2px;
+  }
+  .divider::after { background: linear-gradient(90deg, var(--maroon), transparent); }
+  .divider-icon {
+    color: var(--sky-blue);
+    font-size: 20px;
+    animation: spin 8s linear infinite;
+  }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .branch-selector { display: flex; gap: 12px; margin-bottom: 22px; }
+  .branch-btn {
+    flex: 1;
+    padding: 18px 12px;
+    border: 2px solid var(--sky-blue);
+    background: #fff;
+    color: var(--sky-blue);
+    border-radius: 16px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 700;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    font-family: inherit;
+  }
+  .branch-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    background: linear-gradient(135deg, var(--sky-blue), var(--sky-blue-dark));
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+    z-index: -1;
+  }
+  .branch-btn:hover::before { width: 300px; height: 300px; }
+  .branch-btn:hover {
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(41, 171, 226, 0.35);
+  }
+  .branch-btn.active {
+    background: linear-gradient(135deg, var(--sky-blue), var(--sky-blue-dark));
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(41, 171, 226, 0.4);
+    border-color: var(--sky-blue-dark);
+  }
+  .branch-info {
+    background: linear-gradient(135deg, var(--sky-blue-light), #fff);
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 22px;
+    border-right: 5px solid var(--sky-blue);
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .branch-info::after {
+    content: '';
+    position: absolute;
+    top: -30px; left: -30px;
+    width: 100px; height: 100px;
+    background: var(--maroon);
+    border-radius: 50%;
+    opacity: 0.06;
+  }
+  .branch-info.show { display: block; animation: fadeInRight 0.5s ease-out; }
+  @keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .branch-info h2 {
+    color: var(--sky-blue-dark);
+    margin-bottom: 14px;
+    font-size: 20px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+    color: var(--dark);
+    font-size: 14.5px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .info-item span:first-child { margin-left: 10px; font-size: 18px; flex-shrink: 0; }
+  .action-btns { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+  .action-btns a {
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    padding: 12px 10px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 13px;
+    min-width: 110px;
+    transition: all 0.3s;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .action-btns a:active { transform: scale(0.97); }
+  .btn-location { background: linear-gradient(135deg, var(--sky-blue), var(--sky-blue-dark)); box-shadow: 0 5px 15px rgba(41, 171, 226, 0.3); }
+  .btn-location:hover { box-shadow: 0 8px 20px rgba(41, 171, 226, 0.5); transform: translateY(-2px); }
+  .btn-call { background: linear-gradient(135deg, var(--maroon), var(--maroon-dark)); box-shadow: 0 5px 15px rgba(166, 25, 74, 0.3); }
+  .btn-call:hover { box-shadow: 0 8px 20px rgba(166, 25, 74, 0.5); transform: translateY(-2px); }
+  .btn-whatsapp { background: linear-gradient(135deg, #25D366, #1da851); box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
+  .btn-whatsapp:hover { box-shadow: 0 8px 20px rgba(37, 211, 102, 0.5); transform: translateY(-2px); }
+  form { margin-top: 10px; }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--dark);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  label::before { content: '◈ '; color: var(--sky-blue); font-size: 12px; }
+  input, select, textarea {
+    width: 100%;
+    padding: 13px 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 15px;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+    font-family: inherit;
+    background: #fafbfc;
+    color: var(--dark);
+    font-weight: 600;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--sky-blue);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(41, 171, 226, 0.15);
+    transform: translateY(-2px);
+  }
+  input:hover, select:hover, textarea:hover { border-color: var(--sky-blue); }
+  .submit-btn {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, var(--sky-blue) 0%, var(--sky-blue-dark) 50%, var(--maroon) 100%);
+    background-size: 200% 200%;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    font-size: 17px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.4s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(41, 171, 226, 0.35);
+    font-family: inherit;
+    animation: gradientMove 4s ease infinite;
+    position: relative;
+    overflow: hidden;
+  }
+  @keyframes gradientMove {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  .submit-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(41, 171, 226, 0.5); }
+  .submit-btn:active { transform: translateY(-1px); }
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+  }
+  .submit-btn:hover::after { left: 100%; }
+  .success-msg {
+    display: none;
+    background: linear-gradient(135deg, #d4f5e0, #c8e6c9);
+    color: #1b5e20;
+    padding: 18px;
+    border-radius: 14px;
+    text-align: center;
+    margin-top: 18px;
+    font-weight: 700;
+    line-height: 1.7;
+    border-right: 5px solid #25D366;
+    animation: bounceIn 0.6s ease;
+  }
+  @keyframes bounceIn {
+    0% { opacity: 0; transform: scale(0.8); }
+    60% { opacity: 1; transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+  .note {
+    background: linear-gradient(135deg, #fff9e6, #fff3e0);
+    color: #b45309;
+    padding: 14px 16px;
+    border-radius: 12px;
+    font-size: 13px;
+    margin-bottom: 18px;
+    border-right: 4px solid #f59e0b;
+    font-weight: 600;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.6;
+  }
+  .hidden { display: none !important; }
+  @media (max-width: 480px) {
+    .container { padding: 25px 18px; border-radius: 22px; }
+    h1 { font-size: 22px; }
+    .logo-wrapper img { max-width: 200px; }
+    .branch-btn { padding: 15px 8px; font-size: 14px; }
+    .action-btns a { font-size: 12px; padding: 11px 6px; min-width: 90px; }
+    .submit-btn { font-size: 15px; padding: 16px; }
+  }
+  .fade-item { animation: fadeInUp 0.6s ease-out backwards; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  
+  <div class="logo-wrapper fade-item" style="animation-delay: 0.1s;">
+    <img src="logo.png" alt="Dr. Ahmed Zedan">
+  </div>
+
+  <h1 class="fade-item" style="animation-delay: 0.2s;">احجز موعدك الآن</h1>
+  <p class="subtitle fade-item" style="animation-delay: 0.3s;">
+    اختر الفرع الأقرب لك ثم املأ بيانات الحجز
+  </p>
+
+  <div class="divider fade-item" style="animation-delay: 0.4s;">
+    <span class="divider-icon">✦</span>
+  </div>
+
+  <div class="branch-selector fade-item" style="animation-delay: 0.5s;">
+    <button class="branch-btn" onclick="selectBranch('santa', event)">📍 فرع السنطة</button>
+    <button class="branch-btn" onclick="selectBranch('tanta', event)">📍 فرع طنطا</button>
+  </div>
+
+  <!-- بيانات فرع السنطة -->
+  <div class="branch-info" id="info-santa">
+    <h2>🏥 عيادة السنطة</h2>
+    <div class="info-item"><span>📍</span><span>خلف مستشفي راضي، السنطة - الغربية</span></div>
+    <div class="info-item"><span>🕐</span><span>السبت الي الخميس: 1:00 م - 11:00 م</span></div>
+    <div class="info-item"><span>📞</span><span>01115471086</span></div>
+    <div class="action-btns">
+      <!-- ✅ رابط اللوكيشن الصح -->
+      <a class="btn-location" target="_blank" href="https://maps.app.goo.gl/weeXBkKJ8qwG2hpX6">📍 اللوكيشن</a>
+      <!-- ✅ رقم الاتصال بالصيغة الدولية -->
+      <a class="btn-call" href="tel:+201115471086">📞 اتصل</a>
+      <!-- ✅ رابط واتساب بالصيغة الدولية -->
+      <a class="btn-whatsapp" target="_blank" href="https://wa.me/201115471086">💬 واتساب</a>
+    </div>
+  </div>
+
+  <!-- بيانات فرع طنطا -->
+  <div class="branch-info" id="info-tanta">
+    <h2>🏥 عيادة طنطا</h2>
+    <div class="info-item"><span>📍</span><span>شارع الاشرف بجوار مطعم عواد القديم، طنطا - الغربية</span></div>
+    <div class="info-item"><span>🕐</span><span>يوم الاثنين والاربع: 8:00 م - 12:00 م</span></div>
+    <div class="info-item"><span>📞</span><span>01115471086</span></div>
+    <div class="action-btns">
+      <!-- ✅ رابط اللوكيشن الصح -->
+      <a class="btn-location" target="_blank" href="https://maps.app.goo.gl/gvVassicR51L8T7v9">📍 اللوكيشن</a>
+      <a class="btn-call" href="tel:+201115471086">📞 اتصل</a>
+      <a class="btn-whatsapp" target="_blank" href="https://wa.me/201115471086">💬 واتساب</a>
+    </div>
+  </div>
+
+  <!-- فورم الحجز -->
+  <form id="bookingForm" class="hidden" onsubmit="submitForm(event)">
+    <div class="note">
+      <span>💡</span>
+      <span>بعد ما تملأ البيانات، هيتم فتح واتساب تلقائياً — اضغط "إرسال" عشان يوصلك التأكيد.</span>
+    </div>
+
+    <label>الاسم بالكامل</label>
+    <input type="text" id="name" required placeholder="اكتب اسمك">
+
+    <label>رقم الموبايل</label>
+    <input type="tel" id="phone" required placeholder="01xxxxxxxxx" pattern="01[0-9]{9}">
+
+    <label>الفرع</label>
+    <select id="branch" required>
+      <option value="santa">السنطة</option>
+      <option value="tanta">طنطا</option>
+    </select>
+
+    <label>التاريخ المطلوب</label>
+    <input type="date" id="date" required>
+
+    <label>الوقت المفضل</label>
+    <select id="time" required>
+      <option value="">اختر الوقت</option>
+      <option>4:00 م</option><option>5:00 م</option>
+      <option>6:00 م</option><option>7:00 م</option>
+      <option>8:00 م</option><option>9:00 م</option>
+      <option>10:00 م</option>
+    </select>
+
+    <label>نوع الخدمة</label>
+    <select id="service" required>
+      <option value="">اختر الخدمة</option>
+      <option>كشف عام</option>
+      <option>تنظيف جير</option>
+      <option>حشو</option>
+      <option>خلع</option>
+      <option>تركيب تقويم</option>
+      <option>تبييض</option>
+      <option>زراعة</option>
+    </select>
+
+    <label>ملاحظات إضافية (اختياري)</label>
+    <textarea id="notes" rows="3" placeholder="أي تفاصيل تحب تضيفها"></textarea>
+
+    <button type="submit" class="submit-btn">
+      💬 تأكيد الحجز عبر واتساب
+    </button>
+    <div class="success-msg" id="successMsg"></div>
+  </form>
+</div>
+
+<script>
+  // ═══════════════════════════════════════════
+  // ✅ الأرقام اتحدّثت لرقم العيادة
+  // ═══════════════════════════════════════════
+  const CLINIC_WHATSAPP = {
+    santa: '201115471086',  // ← فرع السنطة
+    tanta: '201115471086'   // ← فرع طنطا (نفس الرقم)
+  };
+  // ═══════════════════════════════════════════
+
+  let currentBranch = null;
+
+  function selectBranch(branch, event) {
+    currentBranch = branch;
+
+    document.querySelectorAll('.branch-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+
+    document.querySelectorAll('.branch-info').forEach(el => el.classList.remove('show'));
+    document.getElementById('info-' + branch).classList.add('show');
+
+    const form = document.getElementById('bookingForm');
+    form.classList.remove('hidden');
+
+    document.getElementById('branch').value = branch;
+
+    setTimeout(() => {
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 200);
+  }
+
+  function submitForm(e) {
+    e.preventDefault();
+
+    const name    = document.getElementById('name').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const branch  = document.getElementById('branch').value;
+    const date    = document.getElementById('date').value;
+    const time    = document.getElementById('time').value;
+    const service = document.getElementById('service').value;
+    const notes   = document.getElementById('notes').value.trim() || 'لا يوجد';
+
+    const branchName = branch === 'santa' ? 'السنطة' : 'طنطا';
+
+    const dateObj = new Date(date);
+    const formattedDate = dateObj.toLocaleDateString('ar-EG', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const message = 
+`🦷 *طلب حجز جديد - Dr. Nour Edan*
+━━━━━━━━━━━━━━━━━━
+👤 *الاسم:* ${name}
+📱 *الموبايل:* ${phone}
+🏥 *الفرع:* ${branchName}
+━━━━━━━━━━━━━━━━━━
+📅 *التاريخ:* ${formattedDate}
+🕐 *الوقت:* ${time}
+💉 *الخدمة:* ${service}
+━━━━━━━━━━━━━━━━━━
+📝 *ملاحظات:* ${notes}
+━━━━━━━━━━━━━━━━━━
+✅ أرجو تأكيد الحجز`;
+
+    const whatsappNumber = CLINIC_WHATSAPP[branch];
+    const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappURL, '_blank');
+
+    const successMsg = document.getElementById('successMsg');
+    successMsg.innerHTML = `
+      ✅ تم فتح واتساب بنجاح!<br>
+      <small>اضغط زر "إرسال" داخل واتساب عشان يوصلك تأكيد الحجز.</small>
+    `;
+    successMsg.style.display = 'block';
+
+    setTimeout(() => {
+      document.getElementById('bookingForm').reset();
+      document.getElementById('branch').value = currentBranch;
+      successMsg.style.display = 'none';
+    }, 8000);
+  }
+
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').setAttribute('min', today);
+</script>
+
+</body>
+</html>
